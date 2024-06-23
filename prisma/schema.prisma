@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model Game {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  stage     String?
+  latitude  String
+  longitude String
+  teams     Team[]
+}
+
+model Team {
+  id           String        @id @default(uuid())
+  name         String
+  level        Int
+  points       BigInt
+  progress     Float
+  game         Game          @relation(fields: [game_id], references: [id])
+  game_id      String
+  players      Player[]
+  quest_queues Quest_queue[]
+}
+
+model Player {
+  id      String @id @default(uuid())
+  name    String
+  team    Team   @relation(fields: [team_id], references: [id])
+  team_id String
+}
+
+model Quest {
+  id        String        @id @default(uuid())
+  clue      String
+  name      String
+  latitude  String
+  longitude String
+  question  String        @default("")
+  answer    String        @default("")
+  queues    Quest_queue[]
+}
+
+model Quest_queue {
+  id         String  @id @default(uuid())
+  level      Int
+  is_done    Boolean @default(false)
+  is_reached Boolean @default(false)
+  quest      Quest   @relation(fields: [quest_id], references: [id])
+  quest_id   String
+  team       Team    @relation(fields: [team_id], references: [id])
+  team_id    String
+}
