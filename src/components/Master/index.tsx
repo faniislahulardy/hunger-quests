@@ -54,7 +54,7 @@ export default function Master({ games, teams }: Props) {
 
   return (
     <Container>
-      <h1>Master page</h1>
+      <h1>Game Master</h1>
 
       <h3>Reset all progress</h3>
       <br />
