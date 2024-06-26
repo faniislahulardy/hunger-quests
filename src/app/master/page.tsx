@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 
 export default async function Page() {
   const games = await prisma?.game.findMany();
+
   const teams = await prisma?.team.findMany({
     include: {
       quest_queues: {
@@ -14,6 +15,9 @@ export default async function Page() {
         }
       },
       players: true
+    },
+    orderBy: {
+      level: 'asc'
     }
   });
 

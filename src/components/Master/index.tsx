@@ -64,17 +64,13 @@ export default function Master({ games, teams }: Props) {
       <br />
       <h3>Game</h3>
       {games?.map(game => (
-        <Row key={game.id}>
+        <Row key={`${game.id}-${game.stage}`}>
           {game.stage === GAME_STAGE.ONBOARDING && (
-            <Button key={game.id} onClick={startGameById(game.id)}>
-              Start Game
-            </Button>
+            <Button onClick={startGameById(game.id)}>Start Game</Button>
           )}
 
           {game.stage === GAME_STAGE.PLAYING && (
-            <Button key={game.id} onClick={endGameById(game.id)}>
-              End Game
-            </Button>
+            <Button onClick={endGameById(game.id)}>End Game</Button>
           )}
         </Row>
       ))}
@@ -83,7 +79,7 @@ export default function Master({ games, teams }: Props) {
       <br />
       <h3>Team progress</h3>
       {teams?.map(team => (
-        <Container key={team.id}>
+        <Container key={`${team.id}-${team.level}`}>
           <h4>
             {team.name} - Level {team.level}
           </h4>
@@ -112,10 +108,14 @@ export default function Master({ games, teams }: Props) {
               </p>
               <p>Quest clue: {questQueue.quest.clue}</p>
               <Row>
-                <Button onClick={updateTeamPosition(questQueue.id)}>Set Reached</Button>
-                <Button onClick={updateQuestLevel(team.id, questQueue.id, team.level)}>
-                  Set Done
-                </Button>
+                {!questQueue.is_reached && (
+                  <Button onClick={updateTeamPosition(questQueue.id)}>Set Reached</Button>
+                )}
+                {!questQueue.is_done && (
+                  <Button onClick={updateQuestLevel(team.id, questQueue.id, team.level)}>
+                    Set Done
+                  </Button>
+                )}
               </Row>
             </Container>
           ))}
