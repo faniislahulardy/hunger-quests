@@ -41,7 +41,7 @@ export default function Game() {
       <GameStatus
         teamName={team.name}
         playerName={player.name}
-        questStatus={`Quest ${team.level + 1} of 3`}
+        questStatus={`${team.level + 1} of 3`}
       />
 
       {game.stage === GAME_STAGE.ONBOARDING && <Introduction />}
