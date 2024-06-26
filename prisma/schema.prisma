@@ -12,20 +12,17 @@ datasource db {
 }
 
 model Game {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  stage     String?
-  latitude  String
-  longitude String
-  teams     Team[]
+  id               String   @id @default(uuid())
+  createdAt        DateTime @default(now())
+  stage            String?
+  minimum_distance BigInt   @default(15)
+  teams            Team[]
 }
 
 model Team {
   id           String        @id @default(uuid())
   name         String
   level        Int
-  points       BigInt
-  progress     Float
   game         Game          @relation(fields: [game_id], references: [id])
   game_id      String
   players      Player[]

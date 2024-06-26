@@ -14,9 +14,14 @@ const TextInput = styled.input<Props>`
   text-align: center;
 
   &:focus {
-    border-color: ${props => (props['data-valid'] ? '#0090e3' : 'red')};
+    border-color: ${props => (props['data-valid'] ? '#0090e3' : '#b12525')};
     outline: none;
+    
+    &::placeholder {
+      color: transparent;
+    }
   }
+}
 `;
 
 export default TextInput;

@@ -28,12 +28,15 @@ export default function GameStatus({ teamName, playerName, questStatus }: Props)
 }
 
 const Container = styled.div`
+  position: fixed;
   padding: 10px 20px;
   width: 100%;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  top: 0;
+  left: 0;
 
   svg {
     margin-right: 10px;

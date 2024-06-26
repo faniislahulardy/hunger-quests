@@ -1,7 +1,9 @@
+/* eslint-disable prettier/prettier */
 import { faCompass } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { distance as textDistance } from 'fastest-levenshtein';
 import { getPreciseDistance } from 'geolib';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 
@@ -10,17 +12,26 @@ import updatePosition from '@/actions/updatePosition';
 import { useGameContext } from '@/contexts/GameContext';
 
 import Button from '../Button';
+import Loader from '../Loader';
 import TextInput from '../TextInput';
 
 export default function Quest() {
-  const { team, queue } = useGameContext();
+  const { game, team, queue } = useGameContext();
   const [answer, setAnswer] = useState<string>('');
   const [difference, setDifference] = useState(99);
   const [distance, setDistance] = useState(-1);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const minimumDistance = game.minimum_distance;
 
   useEffect(() => {
     setDifference(textDistance(answer.toLowerCase(), (queue?.quest.answer || '').toLowerCase()));
   }, [answer]);
+
+  useEffect(() => {
+    setLoading(false);
+    setAnswer('');
+  }, [queue?.is_reached, queue?.quest_id])
 
   useEffect(() => {
     const localLatitude = Number(localStorage.getItem('latitude') || 0);
@@ -58,6 +69,18 @@ export default function Quest() {
     }
   };
 
+const onArrived = (queueId: string) => async () => {
+  await updatePosition(queueId);
+  setLoading(true);
+  router.refresh();
+};
+
+const onQuestCompleted = (teamId: string, queueId: string, level: number) => async () => {
+  await completeQuest(teamId, queueId, level);
+  setLoading(true);
+  router.refresh();
+};
+
   if (!queue) {
     return <></>;
   }
@@ -92,26 +115,18 @@ export default function Quest() {
           <QuestHint>
             {difference < 2 && difference > 0 && <span>Almost correct!</span>}
             {difference === 0 && (
-              <Button onClick={onQuestCompleted(team.id, queue.id, team.level)}>Next</Button>
+              <Button disabled={loading} onClick={onQuestCompleted(team.id, queue.id, team.level)}>Next</Button>
             )}
           </QuestHint>
         </>
       )}
 
-      {!queue.is_reached && <Button onClick={onArrived(queue.id)}>I&lsquo;m here</Button>}
+      {!queue.is_reached && distance < minimumDistance && <Button disabled={loading} onClick={onArrived(queue.id)}>Check in</Button>}
+      
+      {loading && <Loader />}
     </QuestContainer>
   );
 }
-
-const onArrived = (queueId: string) => async () => {
-  await updatePosition(queueId);
-  window.location.reload();
-};
-
-const onQuestCompleted = (teamId: string, queueId: string, level: number) => async () => {
-  await completeQuest(teamId, queueId, level);
-  window.location.reload();
-};
 
 const QuestLocation = styled.div`
   height: 2rem;

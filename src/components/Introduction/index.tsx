@@ -1,22 +1,22 @@
+import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
 
-import startGame from '@/actions/startGame';
 import { useGameContext } from '@/contexts/GameContext';
 
 import Button from '../Button';
 
 export default function Introduction() {
-  const { game } = useGameContext();
+  const { team } = useGameContext();
+  const router = useRouter();
 
   const onPlay = async () => {
-    await startGame(game.id);
-    window.location.reload();
+    router.refresh();
   };
 
   return (
     <IntroContainer>
-      <h1>Welcome to the game</h1>
-      <Button onClick={onPlay}>Let&lsquo;s start</Button>
+      <h1>Welcome to team {team.name}</h1>
+      <Button onClick={onPlay}>Start</Button>
     </IntroContainer>
   );
 }
@@ -28,6 +28,8 @@ const IntroContainer = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 40px;
+  text-align: center;
 
   h1 {
     font-size: 2rem;
