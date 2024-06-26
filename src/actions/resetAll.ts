@@ -12,9 +12,7 @@ export default async function resetAll() {
 
   await prisma?.team.updateMany({
     data: {
-      level: 0,
-      points: 0,
-      progress: 0
+      level: 0
     }
   });
 
