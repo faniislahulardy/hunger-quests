@@ -1,8 +1,10 @@
 'use client';
 
-import { faCheckCircle, faCircleXmark } from '@fortawesome/free-regular-svg-icons';
+import { faCheckCircle, faCircleXmark, faPaperPlane } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import type { Game, Player, Quest, Quest_queue, Team } from '@prisma/client';
+import jwtEncode from 'jwt-encode';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import styled from 'styled-components';
 
@@ -83,6 +85,14 @@ export default function Master({ games, teams }: Props) {
           <h4>
             {team.name} - Level {team.level}
           </h4>
+          <br />
+          <Link
+            href={`/t/${jwtEncode({ teamId: team.id, gameId: team.game_id }, '')}`}
+            target='_blank'
+          >
+            <FontAwesomeIcon style={{ marginRight: 10 }} icon={faPaperPlane} />
+            Quest link
+          </Link>
           <Container>
             <ul>{team.players?.map(player => <li key={player.id}>{player.name}</li>)}</ul>
           </Container>
